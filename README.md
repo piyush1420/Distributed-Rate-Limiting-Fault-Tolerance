@@ -1,5 +1,47 @@
 # Redis vs Raft: Distributed Rate Limiting
 
+**What happens to your rate limiter when a server crashes?**
+We built the same rate limiter two ways, deployed both on AWS, and broke them on purpose to find out.
+
+![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)
+![Raft](https://img.shields.io/badge/Consensus-Raft-6E56CF)
+![AWS](https://img.shields.io/badge/AWS-ECS%20%7C%20EC2%20%7C%20ALB-FF9900)
+![Terraform](https://img.shields.io/badge/Terraform-7B42BC?logo=terraform&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![Locust](https://img.shields.io/badge/Load%20testing-Locust-2E7D32)
+
+## The idea in 30 seconds
+
+A **rate limiter** is a bouncer for your API: each user gets a fixed budget of requests, and anything over the limit is turned away (`429 Too Many Requests`). That's easy on one server. It's hard when your API runs on many servers that all need to agree on how much budget each user has left.
+
+| | 🟢 Redis | 🟣 Raft |
+|---|---|---|
+| **How it works** | One shared store that every server reads and writes | 3 nodes keep identical copies and vote on every update |
+| **Strength** | Fast and simple | Keeps working when a node crashes |
+| **Weakness** | Single point of failure | Slower, since every write needs a majority vote |
+
+Both use the same algorithm (token bucket), the same API and the same load, so any difference comes from the architecture alone.
+
+![Architecture: Redis vs Raft](Report/architecture.png)
+
+## What we found
+
+| Failure we caused | Requests still served | What happened |
+|---|---|---|
+| 🟢 Redis crashes | **52.8%** | No failover, down until AWS restarts it (~61 s) |
+| 🟣 Raft follower killed | **92.7%** | Leader kept serving, no election needed |
+| 🟣 Raft leader killed | **97.3%** | New leader elected in 4.2 s |
+| 🟣 Raft network partition | **91.6%** | New leader elected in 1.9 s |
+
+Under normal load, the Raft cluster (with a cache in front) handled **2,443 requests/second at 1,000 concurrent users with 0 failures**.
+
+**Bottom line:** Redis is simpler, but one crash drops about half the traffic. Raft adds some latency, but kept serving through every failure we threw at it.
+
+---
+
+## Deep Dive
+
 Benchmarks two approaches to distributed rate limiting under identical load - a Redis-backed token bucket and a Raft consensus token bucket. The goal is to measure throughput, latency, and fault tolerance trade-offs between a single-master shared store and a replicated state machine.
 
 ---
@@ -239,4 +281,3 @@ All significant decisions are recorded as ADRs in `decisions/`:
 Full benchmark and analysis reports are in `Report/`:
 
 - `RedisVsRaft_Report.pdf` - Complete milestone report
-- `benchmark_report.pdf` - Raw benchmark data and charts
