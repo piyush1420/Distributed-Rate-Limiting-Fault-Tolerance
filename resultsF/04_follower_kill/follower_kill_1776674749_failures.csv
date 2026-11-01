@@ -1,0 +1,7 @@
+Method,Name,Error,Occurrences
+GET,/raft/status,HTTPError('502 Server Error: Bad Gateway for url: /raft/status'),215
+GET,/raft/health,HTTPError('502 Server Error: Bad Gateway for url: /raft/health'),205
+GET,/raft/check,CatchResponseError('status 504'),576
+GET,/raft/health,HTTPError('504 Server Error: Gateway Time-out for url: /raft/health'),77
+GET,/raft/check,CatchResponseError('status 502'),1654
+GET,/raft/status,HTTPError('504 Server Error: Gateway Time-out for url: /raft/status'),60

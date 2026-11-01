@@ -1,0 +1,13 @@
+experiment: 03_redis_failure
+system: Redis (single node, no replication)
+task_killed: arn:aws:ecs:us-east-1:123442381094:task/redisvraft-cluster/7d15951e5b544f0cb5d0df4226d8b359
+observation_window_s: 60
+obs_requests: 172944
+obs_failures: 81667
+obs_success_rate: 52.78%
+total_requests: 330535
+total_failures: 81667
+ecs_restart_time_s: 61.5
+recovery_mechanism: None — ECS eventually restarts task but no automatic failover
+election: N/A — Redis has no consensus or election mechanism
+html_report: /Users/piyushdaga/Desktop/Go/raft-rate-limiter/RedisVsRaft-Consistency/resultsF/03_redis_failure/redis_failure_1776716952.html

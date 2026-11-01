@@ -1,0 +1,138 @@
+# ─────────────────────────────────────────────
+#  Redis stack  (port 8000 — matches Raft stack)
+# ─────────────────────────────────────────────
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - bench-net
+
+  redis-limiter:
+    build: ./src/redis-limiter
+    environment:
+      - REDIS_ADDR=redis:6379
+      - CAPACITY=100
+      - FILL_RATE=1
+      - HTTP_ADDR=0.0.0.0:8000
+    ports:
+      - "8000:8000"   # unified port — same as raft node1
+    depends_on:
+      - redis
+    networks:
+      - bench-net
+
+# ─────────────────────────────────────────────
+#  Raft stack  (3-node cluster, node1 on 8001)
+# ─────────────────────────────────────────────
+  raft-node1:
+    build: ./src/raft-limiter
+    container_name: raft-node1
+    environment:
+      - NODE_ID=node1
+      - RAFT_ADDR=raft-node1:7000
+      - HTTP_ADDR=0.0.0.0:8000
+      - DATA_DIR=/data
+      - BOOTSTRAP=true
+      - MAX_TOKENS=100
+      - WINDOW_SECS=60
+    ports:
+      - "8001:8000"
+    volumes:
+      - raft-node1-data:/data
+    networks:
+      - bench-net
+
+  raft-node2:
+    build: ./src/raft-limiter
+    container_name: raft-node2
+    environment:
+      - NODE_ID=node2
+      - RAFT_ADDR=raft-node2:7000
+      - HTTP_ADDR=0.0.0.0:8000
+      - DATA_DIR=/data
+      - JOIN_ADDR=raft-node1:8000
+      - MAX_TOKENS=100
+      - WINDOW_SECS=60
+    ports:
+      - "8002:8000"
+    volumes:
+      - raft-node2-data:/data
+    depends_on:
+      - raft-node1
+    networks:
+      - bench-net
+
+  raft-node3:
+    build: ./src/raft-limiter
+    container_name: raft-node3
+    environment:
+      - NODE_ID=node3
+      - RAFT_ADDR=raft-node3:7000
+      - HTTP_ADDR=0.0.0.0:8000
+      - DATA_DIR=/data
+      - JOIN_ADDR=raft-node1:8000
+      - MAX_TOKENS=100
+      - WINDOW_SECS=60
+    ports:
+      - "8003:8000"
+    volumes:
+      - raft-node3-data:/data
+    depends_on:
+      - raft-node1
+    networks:
+      - bench-net
+
+# ─────────────────────────────────────────────
+  #  Raft API tier (caching + forwarding layer)
+  #  Sits in front of the 3 Raft nodes.
+  #  Client requests hit here first; cache hits stay local,
+  #  misses forward to the current Raft leader.
+  # ─────────────────────────────────────────────
+  raft-api:
+    build: ./src/raft-api
+    container_name: raft-api
+    environment:
+      - RAFT_NODES=raft-node1:8000,raft-node2:8000,raft-node3:8000
+      - CACHE_TTL_SECS=1
+      - HTTP_ADDR=0.0.0.0:8000
+    ports:
+      - "8010:8000"   # expose on 8010 so we can hit it locally
+    depends_on:
+      - raft-node1
+      - raft-node2
+      - raft-node3
+    networks:
+      - bench-net
+      
+# ─────────────────────────────────────────────
+#  Unified Locust harness
+#  Default target: redis-limiter. Override HOST
+#  to switch: HOST=http://raft-node1:8000 docker compose up locust
+# ─────────────────────────────────────────────
+  locust:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./experiments:/mnt/locust
+    environment:
+      - LOCUST_LOCUSTFILE=/mnt/locust/locustfile.py
+    command: >
+      -f /mnt/locust/locustfile.py
+      --host ${HOST:-http://redis-limiter:8000}
+    depends_on:
+      - redis-limiter
+      - raft-node1
+    networks:
+      - bench-net
+
+volumes:
+  raft-node1-data:
+  raft-node2-data:
+  raft-node3-data:
+
+networks:
+  bench-net:
+    driver: bridge

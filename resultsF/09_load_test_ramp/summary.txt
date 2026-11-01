@@ -1,0 +1,4 @@
+/raft/check throughput: 2,443 req/s | /raft/check[429]: 1,327 req/s
+Median: 240ms | p95: 450ms | p99: 600ms | Max: 7,200ms
+Total failures: 0
+Duration: 5 min, 1000 users

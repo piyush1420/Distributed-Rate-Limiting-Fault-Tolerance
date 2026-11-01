@@ -1,0 +1,5 @@
+# AWS Academy accounts use a pre-existing LabRole — IAM role creation is restricted.
+# LabRole already has AmazonECSTaskExecutionRolePolicy + CloudWatch + ECR permissions.
+data "aws_iam_role" "lab_role" {
+  name = "LabRole"
+}

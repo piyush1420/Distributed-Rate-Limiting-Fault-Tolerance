@@ -1,0 +1,4 @@
+Method,Name,Error,Occurrences
+GET,/check,CatchResponseError('status 503'),65212
+GET,/status,HTTPError('503 Server Error: Service Temporarily Unavailable for url: /status'),8368
+GET,/health,HTTPError('503 Server Error: Service Temporarily Unavailable for url: /health'),8087

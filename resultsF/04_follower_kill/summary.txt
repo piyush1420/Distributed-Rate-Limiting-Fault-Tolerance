@@ -1,0 +1,12 @@
+experiment: 04_follower_kill
+target: 10.0.0.10 (i-026501094fadf1c64)
+leader: 10.0.0.12
+election_triggered: No
+observation_window_s: 60
+obs_requests: 38198
+obs_failures: 2787
+obs_success_rate: 92.70%
+total_requests: 169268
+total_failures: 2787
+recovery_time_s: 78.3
+html_report: /Users/piyushdaga/Desktop/Go/raft-rate-limiter/RedisVsRaft-Consistency/resultsF/04_follower_kill/follower_kill_1776674749.html

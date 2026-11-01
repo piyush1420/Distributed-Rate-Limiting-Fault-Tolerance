@@ -1,0 +1,13 @@
+experiment: 07_network_partition
+old_leader: 10.0.0.10
+new_leader: 10.0.0.12:7000
+election_time_s: 1.93
+partition_method: iptables DROP on ports 7000 and 8000
+observation_window_s: 60
+obs_requests: 103479
+obs_failures: 8730
+obs_success_rate: 91.56%
+total_requests: 196885
+total_failures: 8730
+recovery_time_s: 87.8
+html_report: /Users/piyushdaga/Desktop/Go/raft-rate-limiter/RedisVsRaft-Consistency/resultsF/07_network_partition/network_partition_1776679880.html

@@ -1,0 +1,5 @@
+Method,Name,Error,Occurrences
+GET,/check,CatchResponseError('unexpected status 504'),14
+GET,/check,CatchResponseError('unexpected status 503'),1
+GET,/health,HTTPError('504 Server Error: Gateway Time-out for url: /health'),5
+GET,/status,HTTPError('504 Server Error: Gateway Time-out for url: /status'),2

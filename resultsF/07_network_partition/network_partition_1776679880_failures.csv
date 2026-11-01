@@ -1,0 +1,3 @@
+Method,Name,Error,Occurrences
+GET,/raft/check,CatchResponseError('status 500'),23
+GET,/raft/check,CatchResponseError('status 503'),8707

@@ -1,0 +1,7 @@
+alb_dns = "http://redisvraft-alb-1752746576.us-east-1.elb.amazonaws.com"
+ecr_raft_api = "123442381094.dkr.ecr.us-east-1.amazonaws.com/redisvraft/raft-api"
+ecr_raft_limiter = "123442381094.dkr.ecr.us-east-1.amazonaws.com/redisvraft/raft-limiter"
+ecr_redis_limiter = "123442381094.dkr.ecr.us-east-1.amazonaws.com/redisvraft/redis-limiter"
+elasticache_endpoint = "redisvraft-redis.o37mw8.0001.use1.cache.amazonaws.com"
+raft_limiter_url = "http://redisvraft-alb-1752746576.us-east-1.elb.amazonaws.com/raft"
+redis_limiter_url = "http://redisvraft-alb-1752746576.us-east-1.elb.amazonaws.com"
