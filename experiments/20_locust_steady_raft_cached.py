@@ -2,15 +2,15 @@
 20_locust_steady_raft_cached.py
 
 Steady-state load test for the Raft rate limiter WITH raft-api cache layer.
-Matches Gautam's test parameters (200 users, 120s, 20 users/sec ramp,
+Matches test parameters (200 users, 120s, 20 users/sec ramp,
 80/10/10 task mix) so the results are directly comparable.
 
-The key difference: Gautam's test hit raw Raft nodes via ALB (/check).
+The key difference: test hit raw Raft nodes via ALB (/check).
 This test hits the raft-api caching layer via ALB (/raft/check).
 Cache absorbs repeat requests, so we expect higher throughput and lower
-latency than Gautam's raw Raft numbers (1,180 req/s, 67ms median).
+latency than  raw Raft numbers (1,180 req/s, 67ms median).
 
-Run (steady 200 users, matches Gautam):
+Run (steady 200 users, matches ):
     cd ~/Desktop/Go/raft-rate-limiter/RedisVsRaft-Consistency
     locust -f experiments/20_locust_steady_raft_cached.py \
         --host http://redisvraft-alb-1752746576.us-east-1.elb.amazonaws.com \
@@ -21,7 +21,7 @@ Run (steady 200 users, matches Gautam):
         --csv results/raft_cached_steady_$(date +%s) \
         --html results/raft_cached_steady_$(date +%s).html
 
-Compare against Gautam's Redis baseline:
+Compare against Redis baseline:
     Redis:     1,990 req/s | 38ms median | 79ms p95 | 140ms p99
     Raw Raft:  1,180 req/s | 67ms median | 170ms p95 | 240ms p99
 """

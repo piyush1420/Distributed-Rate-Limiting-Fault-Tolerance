@@ -3,7 +3,7 @@
 
 Steady-state load test for RAW Raft (no cache layer).
 ALB routes directly to 3 Raft EC2 nodes.
-Matches Gautam's Redis test parameters for direct comparison.
+Matches Redis test parameters for direct comparison.
 
 Parameters:
     Users: 200
@@ -24,8 +24,8 @@ Run:
         --html resultsF/08_load_test_steady/raw_raft_steady_$TS.html
 
 Compare against:
-    Gautam's Redis:      1,990 req/s | 38ms median | 79ms p95
-    Gautam's Raw Raft:   1,180 req/s | 67ms median | 170ms p95
+    Redis:      1,990 req/s | 38ms median | 79ms p95
+    Raw Raft:   1,180 req/s | 67ms median | 170ms p95
 """
 
 import random

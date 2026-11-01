@@ -31,7 +31,7 @@ CW
   -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
 
 # ── ECR login ─────────────────────────────────────────────────────────────────
-# Gautams version
+
 # aws ecr get-login-password --region ${region} | \
 #   docker login --username AWS --password-stdin \
 #   $(echo "${ecr_image}" | cut -d/ -f1)

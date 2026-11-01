@@ -5,8 +5,8 @@ set -e
 # Deploy script — detects AWS environment and configures Terraform accordingly.
 #
 # Two supported environments:
-#   1. AWS Academy Learner Lab  -> uses existing "LabRole"      (Gautam's account)
-#   2. Innovation Sandbox       -> creates IAM roles from scratch (Piyush's account)
+#   1. AWS Academy Learner Lab  -> uses existing "LabRole"     
+#   2. Innovation Sandbox       -> creates IAM roles from scratch 
 #
 # The script detects which account you're in by checking if "LabRole" exists.
 # It then activates the correct IAM Terraform file before running `terraform init`.
@@ -73,8 +73,8 @@ echo ""
 # ── Step 4: Run Terraform ──────────────────────────────────────────────────
 cd "$INFRA_DIR"
 
-# Backend config — for Sandbox, use Piyush's bucket.
-# For Learner Lab, use Gautam's bucket. Fall back to local state if either fails.
+# Backend config — for Sandbox, 
+# For Learner Lab, use bucket. Fall back to local state if either fails.
 if [ "$ENV_TYPE" = "sandbox" ]; then
   BACKEND_BUCKET="redisvraft-tfstate-piyush-sandbox"
 else
